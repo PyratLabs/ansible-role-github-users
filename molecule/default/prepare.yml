@@ -1,0 +1,8 @@
+---
+
+- name: Prepare containers for local-user install testing
+  hosts: all
+  become: true
+  tasks:
+    - debug:
+        msg: "No preparation steps required."

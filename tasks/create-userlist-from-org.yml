@@ -1,0 +1,30 @@
+---
+
+- name: Ensure GitHub API Version header exists
+  set_fact:
+    github_users_api_headers:
+      Accept: "{{ github_api_version_header }}"
+
+- name: Ensure an auth header exists if using OAuth2
+  set_fact:
+    github_users_api_headers:
+      Authorization: "token {{ github_users_oauth2_token }}"
+      Accept: "{{ github_api_version_header }}"
+  no_log: true
+  when: github_users_oauth2_token is defined and github_users_oauth2_token
+
+- name: Check that an organisation exists
+  uri:
+    url: "{{ github_api_orgs }}/{{ github_users_org }}"
+    return_content: yes
+    body_format: json
+  register: github_users_check_org
+  failed_when: github_users_check_org.status == 404
+
+- import_tasks: create-userlist-from-teams.yml
+  when: github_users_org_group_by_teams is defined
+        and github_users_org_group_by_teams
+
+- import_tasks: create-userlist-from-org-membership.yml
+  when: github_users_org_group_by_teams is not defined
+        or not github_users_org_group_by_teams

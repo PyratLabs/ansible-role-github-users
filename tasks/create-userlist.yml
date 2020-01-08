@@ -1,0 +1,12 @@
+---
+
+- name: Ensure a list of users and their proposed groups is generated
+  set_fact:
+    github_users_groups_list: "{{ github_users_groups_list
+      + [ {
+          'name': item.name,
+          'groups': item.groups | default([]) | flatten | union(github_users_default_groups)
+          } ] }}"
+  loop: "{{ github_users }}"
+  vars:
+    github_user_merge_query: "[?name==`{{ item }}`].groups"

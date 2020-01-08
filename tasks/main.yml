@@ -1,0 +1,10 @@
+---
+# tasks file for ansible-role-github-users
+
+- import_tasks: create-userlist-from-org.yml
+  when: github_users_org is defined and github_users_org
+
+- import_tasks: create-userlist.yml
+  when: github_users_org is not defined or not github_users_org
+
+- import_tasks: create-users.yml

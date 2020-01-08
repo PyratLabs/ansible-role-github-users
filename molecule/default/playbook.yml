@@ -1,0 +1,15 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  vars:
+    github_users_default_groups:
+      - github
+    github_users:
+      - name: xanmanning
+        groups:
+          - sudo
+          - docker
+      - name: xmanningcentiq
+  roles:
+    - role: xanmanning.github-users

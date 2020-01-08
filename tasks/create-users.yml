@@ -1,0 +1,34 @@
+---
+
+- name: Ensure a list of groups is generated
+  set_fact:
+    github_groups_list: "{{ github_users_groups_list | json_query('[*].groups') | flatten | unique }}"
+
+- name: Ensure GitHub groups exist
+  group:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ github_groups_list }}"
+
+- name: Ensure GitHub user accounts are present
+  user:
+    name: "{{ item.name }}"
+    groups: "{{ item.groups | join(',') | default(omit) }}"
+    createhome: true
+    home: "/home/{{ item.name }}"
+    state: present
+  loop: "{{ github_users_groups_list }}"
+
+- name: Ensure GitHub user accounts have an authorized_key file.
+  authorized_key:
+    user: "{{ item.name }}"
+    key: "{{ github_url }}/{{ item.name }}.keys"
+    manage_dir: true
+    exclusive: "{{ github_users_authorized_keys_exclusive }}"
+  loop: "{{ github_users_groups_list }}"
+
+- name: Ensure GitHub users that should be absent are removed
+  user:
+    name: "{{ item.name }}"
+    state: absent
+  loop: "{{ github_users_absent }}"

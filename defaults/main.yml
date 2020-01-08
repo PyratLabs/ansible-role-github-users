@@ -1,0 +1,89 @@
+---
+# defaults file for ansible-role-github-users
+
+# Create users from a GitHub organisation. If your oranisation members don't
+# have public membership, then you will need to specify an authentication
+# method.
+#
+# Example:
+#
+#   github_users_org: PyratLabs
+#
+# User/Pass API Authentication Variables:
+#
+#   github_users_auth_user: someGitHubUsername
+#   github_users_auth_pass: s0m3P@ssw0rD!
+#
+# OAuth2 Token API Authentication Variables:
+#
+#   github_users_oauth2_token: xxxxxx-yyyyyy-zzzzzz
+#
+github_users_org: false
+
+# Create groups from GitHub teams, assign users to Groups by team membership
+# This requires github_users_org to be defined.
+github_users_org_group_by_teams: false
+
+# Default groups, if set all users will be assigned to these groups.
+#
+# Example:
+#
+#   github_users_default_groups:
+#     - users
+#     - docker
+#
+# An empty list will automatically assign users to a group that matches their
+# username., eg: UID=xanmanning GID=xanmanning
+github_users_default_groups: []
+
+# List of GitHub Users, if you have set github_users_org, this can be used to
+# map users to specific groups. If you have not set github_users_org this will
+# find users (regardless of organisation membership) and create users for them.
+#
+# Example:
+#
+# github_users:
+#   - name: xanmanning
+#     groups:
+#       - wheel
+#       - docker
+#
+# Or...
+#
+# github_users:
+#   - name: xanmanning
+github_users: []
+
+# List of users who must be absent from the system. The other side of
+# Joiners, Movers and Leavers - who has left the team and must be absent from
+# all target systems?
+#
+# Example
+#
+#   github_users_absent:
+#     - name: xanmanning
+github_users_absent: []
+
+# Should users keys discovered on GitHub be their exclusive keys? ie. Should
+# we remove any other keys that are in .ssh/authorized_keys.
+# By default we have this as false as a user may have keys from their mobile
+# client.
+github_users_authorized_keys_exclusive: false
+
+# Authentication for using GitHub API. If you are taking users from an
+# Organisation then you may need to authenticate with the API, with a valid
+# user that can list Org members. If you do not set these then only public
+# members can be read from GitHub.
+#
+# User/Pass Auth. It is not recommended to use User/Pass authentication
+# However if you do, ensure the secret information is projected with
+# ansible-vault.
+#
+# github_users_auth_user: someGitHubUsername
+# github_users_auth_pass: s0m3P@ssw0rD!
+#
+# Alternatively, use OAuth2 token, this is a better solution as tokens cna be
+# easily revoked. It is highly recommended that this is also protected with
+# ansible-vault.
+#
+# github_users_oauth2_token: xxxxxx-yyyyyy-zzzzzz

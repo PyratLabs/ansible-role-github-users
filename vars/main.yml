@@ -1,0 +1,14 @@
+---
+# vars file for ansible-role-github-users
+
+github_url: https://github.com
+github_api: https://api.github.com
+github_api_orgs: "{{ github_api }}/orgs"
+github_api_users: "{{ github_api }}/users"
+github_api_version_header: application/vnd.github.v3+json
+
+github_teams_list: []
+github_team_members_list: []
+github_users_list: []
+github_users_groups_list: []
+github_groups_list: []

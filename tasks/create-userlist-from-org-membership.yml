@@ -1,0 +1,31 @@
+---
+
+- name: Check the organisation for a list of members
+  uri:
+    url: "{{ github_api_orgs }}/{{ github_users_org }}/members"
+    return_content: yes
+    body_format: json
+    url_username: "{{ github_users_auth_user | default(omit) }}"
+    url_password: "{{ github_users_auth_pass | default(omit) }}"
+    headers: "{{ github_users_api_headers | default(omit) }}"
+  register: github_users_check_members
+  failed_when: github_users_check_members.status != 200
+  no_log: true
+
+- name: Ensure a list of users is generated from team memberships
+  set_fact:
+    github_users_list: "{{ github_users_list + [ item.login ] }}"
+  loop: "{{ github_users_check_members.json }}"
+  no_log: true
+
+- name: Ensure a list of users and their proposed groups is generated
+  set_fact:
+    github_users_groups_list: "{{ github_users_groups_list
+      + [ {
+          'name': item,
+          'groups': github_users | json_query(github_user_merge_query) | flatten |
+                    union(github_users_default_groups)
+          } ] }}"
+  loop: "{{ github_users_list }}"
+  vars:
+    github_user_merge_query: "[?name==`{{ item }}`].groups"

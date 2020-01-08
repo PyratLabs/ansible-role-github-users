@@ -1,0 +1,64 @@
+---
+
+- name: Check the organisation for a list of teams
+  uri:
+    url: "{{ github_api_orgs }}/{{ github_users_org }}/teams"
+    return_content: yes
+    body_format: json
+    url_username: "{{ github_users_auth_user | default(omit) }}"
+    url_password: "{{ github_users_auth_pass | default(omit) }}"
+    headers: "{{ github_users_api_headers | default(omit) }}"
+  register: github_users_check_teams
+  no_log: true
+  failed_when: github_users_check_teams.status != 200
+
+- name: Ensure a list of teams is generated
+  set_fact:
+    github_teams_list: "{{ github_teams_list
+      + [ { 'name': item.slug | regex_replace('[^a-zA-Z0-9]'),
+            'id': item.id,
+            'url': item.url } ] }}"
+  loop: "{{ github_users_check_teams.json }}"
+  no_log: true
+
+- name: Check teams for a list of members
+  uri:
+    url: "{{ item.url }}/members"
+    return_content: yes
+    body_format: json
+    url_username: "{{ github_users_auth_user | default(omit) }}"
+    url_password: "{{ github_users_auth_pass | default(omit) }}"
+    headers: "{{ github_users_api_headers | default(omit) }}"
+  register: github_users_check_team_members
+  failed_when: github_users_check_team_members.status != 200
+  no_log: true
+  loop: "{{ github_teams_list }}"
+
+- name: Ensure a list of team members is generated
+  set_fact:
+    github_team_members_list: "{{ github_team_members_list
+      + [ { 'team': item.item.name,
+            'members': item.json | json_query('[*].login')
+          } ] }}"
+  loop: "{{ github_users_check_team_members.results }}"
+  no_log: true
+
+- name: Ensure a list of users is generated from team memberships
+  set_fact:
+    github_users_list: "{{ github_users_list | union(item.members) | unique }}"
+  loop: "{{ github_team_members_list }}"
+
+- name: Ensure a list of users and their proposed groups is generated
+  set_fact:
+    github_users_groups_list: "{{ github_users_groups_list
+      + [ {
+          'name': item,
+          'groups': github_team_members_list |
+                    json_query(github_user_search_query) |
+                    union(github_users | json_query(github_user_merge_query) | flatten) |
+                    union(github_users_default_groups)
+          } ] }}"
+  loop: "{{ github_users_list }}"
+  vars:
+    github_user_search_query: "[?members.contains(@, `{{ item }}`)].team"
+    github_user_merge_query: "[?name==`{{ item }}`].groups"
