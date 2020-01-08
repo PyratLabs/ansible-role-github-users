@@ -1,4 +1,4 @@
-# Ansible Role: github-users
+# Ansible Role: github_users
 
 Ansible role for create users on a system from GitHub / GitHub organisations,
 based on [geerlingguy.github-users](https://galaxy.ansible.com/geerlingguy/github-users)
@@ -21,6 +21,7 @@ This role has been tested on Ansible 2.7.0+ against the following Linux Distribu
   - Fedora 30
   - Fedora 31
   - Ubuntu 18.04 LTS
+  - openSUSE 15
 
 ## Disclaimer
 
@@ -63,7 +64,7 @@ Example playbook for creating a list of users from GitHub
           - docker
       - name: xmanningcentiq
   roles:
-    - role: xanmanning.github-users
+    - role: xanmanning.github_users
 ```
 
 Example playbook for creating users from organisation and adding them all to
@@ -78,7 +79,7 @@ the group "github"
     github_users_default_groups:
       - github
   roles:
-    - role: xanmanning.github-users
+    - role: xanmanning.github_users
 ```
 
 Example playbook for creating users from organisation and adding them all groups
@@ -103,7 +104,7 @@ based upon their team name.
         groups:
           - users
   roles:
-    - role: xanmanning.github-users
+    - role: xanmanning.github_users
 ```
 
 ## License
