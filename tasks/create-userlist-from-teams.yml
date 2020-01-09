@@ -15,10 +15,11 @@
 - name: Ensure a list of teams is generated
   set_fact:
     github_teams_list: "{{ github_teams_list
-      + [ { 'name': item.slug | regex_replace('[^a-zA-Z0-9]'),
+      + [ { 'name': item.slug,
             'id': item.id,
             'url': item.url } ] }}"
   loop: "{{ github_users_check_teams.json }}"
+  when: item.slug not in github_users_org_exclude_teams
   no_log: true
 
 - name: Check teams for a list of members

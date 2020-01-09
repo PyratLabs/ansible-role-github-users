@@ -37,10 +37,12 @@ Below are a list of variables. For a more detailed description please refer to
 |------------------------------------------|-----------------------------------------------------------------------------------|---------------|
 | `github_users_org`                       | Create users from specified GitHub Org.                                           | `false`       |
 | `github_users_org_group_by_teams`        | Add users to groups based on teams.                                               | `false`       |
+| `github_users_org_exclude_teams`         | List of teams to exclude from user creation.                                      | `[]`          |
 | `github_users_default_groups`            | List of default groups for all users to be added to.                              | `[]`          |
 | `github_users`                           | List of GitHub users. If `github_users_org` specified, this maps users to groups. | `[]`          |
 | `github_users_absent`                    | List of GitHub users who should not be present on a system.                       | `[]`          |
 | `github_users_authorized_keys_exclusive` | Remove other keys in authorized_keys file? True/False.                            | `false`       |
+| `github_users_to_lower`                  | Ensure user and group names are lowercase? True/False.                            | `true`        |
 | `github_users_auth_user`                 | (Optional) User to authenticate against API with. OAuth2 token preferred.         | _NULL_        |
 | `github_users_auth_pass`                 | (Optional) Password to use for authentication with API. OAuth2 token preferred.   | _NULL_        |
 | `github_users_oauth2_token`              | (Optional) OAuth2 token to use to authenticate with API.                          | _NULL_        |

@@ -6,6 +6,8 @@
     github_users_org: PyratLabs
     github_users_org_group_by_teams: true
     github_users_oauth2_token: "{{ lookup('env','MOLECULE_GITHUB_OAUTH2') }}"
+    github_users_org_exclude_teams:
+      - marketing
     github_users_default_groups:
       - github
     github_users:

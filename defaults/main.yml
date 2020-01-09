@@ -24,6 +24,15 @@ github_users_org: false
 # This requires github_users_org to be defined.
 github_users_org_group_by_teams: false
 
+# Exclude the following teams from having users created. This is a list of
+# team names to not include when generating a list of users.
+#
+# Example:
+#
+#   github_users_org_exclude_teams:
+#      - marketing
+github_users_org_exclude_teams: []
+
 # Default groups, if set all users will be assigned to these groups.
 #
 # Example:
@@ -69,6 +78,9 @@ github_users_absent: []
 # By default we have this as false as a user may have keys from their mobile
 # client.
 github_users_authorized_keys_exclusive: false
+
+# Ensure all usernames and groups are lowercase?
+github_users_to_lower: true
 
 # Authentication for using GitHub API. If you are taking users from an
 # Organisation then you may need to authenticate with the API, with a valid

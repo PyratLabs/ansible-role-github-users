@@ -2,18 +2,20 @@
 
 - name: Ensure a list of groups is generated
   set_fact:
-    github_groups_list: "{{ github_users_groups_list | json_query('[*].groups') | flatten | unique }}"
+    github_groups_list: "{{ github_users_groups_list |
+      json_query('[*].groups') | flatten | unique }}"
 
 - name: Ensure GitHub groups exist
   group:
-    name: "{{ item }}"
+    name: "{{ (item | lower) if github_users_to_lower else item }}"
     state: present
   loop: "{{ github_groups_list }}"
 
 - name: Ensure GitHub user accounts are present
   user:
-    name: "{{ item.name }}"
-    groups: "{{ item.groups | join(',') | default(omit) }}"
+    name: "{{ (item.name | lower) if github_users_to_lower else item.name }}"
+    groups: "{{ (item.groups | join(',') | lower) if github_users_to_lower
+      else (item.groups | join(',')) | default(omit) }}"
     createhome: true
     home: "/home/{{ item.name }}"
     state: present
@@ -21,7 +23,7 @@
 
 - name: Ensure GitHub user accounts have an authorized_key file.
   authorized_key:
-    user: "{{ item.name }}"
+    user: "{{ (item.name | lower) if github_users_to_lower else item.name }}"
     key: "{{ github_url }}/{{ item.name }}.keys"
     manage_dir: true
     exclusive: "{{ github_users_authorized_keys_exclusive }}"
