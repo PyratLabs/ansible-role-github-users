@@ -111,7 +111,7 @@ based upon their team name.
 
 ## License
 
-BSD
+[BSD 3-clause](LICENSE.txt)
 
 ## Author Information
 
